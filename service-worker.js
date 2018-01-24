@@ -1,9 +1,11 @@
-var CACHE_NAME = 'pwa-ui5-todo-v1.0.07';
-var RESOURCES_TO_PRELOAD = [
+const CACHE_NAME = 'pwa-ui5-todo-v1.0.07';
+const RESOURCES_TO_PRELOAD = [
 	'index.html',
 	'logo.svg',
 	'register-worker.js',
-	'todo-app.js',
+	'Component.js',
+	'view/homePage.view.xml',
+	'controller/homePage.controller.js',
 	'manifest.json'
 ];
 
@@ -53,7 +55,7 @@ self.addEventListener('fetch', function (event) {
 				return response; // There is a cached version of the resource already
 			}
 
-			var requestCopy = event.request.clone();
+			let requestCopy = event.request.clone();
 			return fetch(requestCopy).then(function (response) {
 				if (!response) {
 					return response;
@@ -63,7 +65,7 @@ self.addEventListener('fetch', function (event) {
 				// was successful (responses with type === 'opaque' have zero status). 
 				// For example, a 404 CDN error will be cached, too.
 				if (response.status === 200 || response.type === 'opaque') {
-					var responseCopy = response.clone();
+					let responseCopy = response.clone();
 					caches.open(CACHE_NAME).then(function (cache) {
 						cache.put(event.request, responseCopy);
 					});
