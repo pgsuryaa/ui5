@@ -37,12 +37,17 @@ sap.ui.define([
 							that.custName = response.result.parameters.custName;
 							that.note = response.result.parameters.note;
 							that.recallDate = response.result.parameters.recallDate;
+							if(that.actNo)
+								that.actNo=that.prependZeroes(that.actNo);
 							if (that.actNo && !that.recallDate && !that.note) {
 								var flag = 0;
 								var oModel = that.getView().getModel("actModel");
 								for (var i = 0; i < oModel.oData.d.results.length; i++) {
 									if (oModel.oData.d.results[i].AccountId == that.actNo) {
 										flag = 1;
+										response.result.parameters.custName= oModel.oData.d.results[i].SoldToPartner;
+										that.custName=oModel.oData.d.results[i].SoldToPartner;
+										result="So it is for "+that.custName+". What's the recall date?";
 									}
 								}
 								if (!flag) {
@@ -50,9 +55,10 @@ sap.ui.define([
 								}
 							}
 							if (that.actNo && that.note) {
-
+								
 								var oModel = that.getView().getModel("actModel");
 								for (var i = 0; i < oModel.oData.d.results.length; i++) {
+									
 									if (oModel.oData.d.results[i].AccountId == that.actNo) {
 										var oItem = JSON.parse(JSON.stringify(oModel.oData.d.results[i]));
 										
@@ -67,6 +73,7 @@ sap.ui.define([
 										oItem.Notes = oNote;
 										oModel.oData.d.results.push(oItem);
 										oModel.refresh();
+										result="Great! Activity with "+oItem.ActivityId+" has been created."
 										break;
 										
 									}
@@ -91,7 +98,7 @@ sap.ui.define([
 								var oItems = [];
 								for (var i = 0; i < oModel.oData.d.results.length; i++) {
 									var str = oModel.oData.d.results[i].SoldToPartner.toLowerCase();
-									if (str.includes(that.custName.toLowerCase())) {
+									if (str==that.custName.toLowerCase()) {
 
 										oItems.push(oModel.oData.d.results[i]);
 									}
@@ -146,6 +153,7 @@ sap.ui.define([
 						oMessage.addContent(new sap.m.Text({
 							text: result
 						}));
+						artyom.say(result);
 						that.getView().byId("msgContent").addContent(oMessage);
 						jQuery.sap.delayedCall(500, that, function() {
 							that.scrollDown();
@@ -157,8 +165,16 @@ sap.ui.define([
 			artyom.addCommands(commandHello);
 		},
 		onAfterRendering: function() {
+			var that=this;
 			this.app = sap.ui.getCore().byId("appId");
-
+			this.sendText("Hey!").then(function(response){
+				var oMessage= new BotResponse();
+				oMessage.addContent(new sap.m.Text({
+					text: response.result.fulfillment.speech
+				}));
+				that.getView().byId("msgContent").addContent(oMessage);
+				artyom.say(response.result.fulfillment.speech);
+			});
 			//	dragElement(document.getElementById('homeView--mydiv'));
 		},
 		toggleListen: function(oEvent) {
@@ -226,11 +242,16 @@ sap.ui.define([
 			}
 			id++;
 			id=id.toString();
-			for(var i=id.length;i<10;i++){
-				id= "0"+id;
-			}
+			id= this.prependZeroes(id);
 			return id;
 			
+		},
+		prependZeroes:function(id){
+			for(var i=id.length;i<10;i++){
+				id= "0"+id;
+				
+			}
+			return id;
 		}
 
 	});
