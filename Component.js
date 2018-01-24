@@ -1,5 +1,5 @@
-jQuery.sap.require("artyom");
-jQuery.sap.require("util/ApiAi");
+jQuery.sap.require("zpwa_test/artyom");
+jQuery.sap.require("zpwa_test/util/ApiAi");
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
