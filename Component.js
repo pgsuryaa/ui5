@@ -1,3 +1,6 @@
+jQuery.sap.require("artyom");
+jQuery.sap.require("util/ApiAi");
+
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
