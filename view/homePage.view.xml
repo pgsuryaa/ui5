@@ -2,7 +2,7 @@
 	displayBlock="true" xmlns="sap.m" xmlns:tnt="sap.tnt">
 	<App>
 		<pages>
-			<Page title="NS Assistant" id="msgContent" showHeader="true">
+			<Page title="NS Assistant" id="msgContent" class="contentCls" showHeader="true">
 				<customHeader>
 					<tnt:ToolHeader>
 						<Button icon="sap-icon://menu2" type="Transparent">
@@ -10,7 +10,7 @@
 					</tnt:ToolHeader>
 				</customHeader>
 				<content>
-					<PullToRefresh id="pullToRefresh" refresh="handleRefresh"/>
+					<!--<PullToRefresh id="pullToRefresh" refresh="handleRefresh"/>-->
 					<!--<VBox class="wrapper">-->
 					<!--<Button id="dragBtn" class="dragBtn draggable" icon="mic.png" press="toggleListen" />-->
 					<!--</VBox>-->
