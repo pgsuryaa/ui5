@@ -1,7 +1,6 @@
 const CACHE_NAME = 'pwa-ui5-test-v1.0.07';
 const RESOURCES_TO_PRELOAD = [
 	'index.html',
-	'logo.svg',
 	'register-worker.js',
 	'Component.js',
 	'view/homePage.view.xml',
