@@ -13,6 +13,9 @@
 .card-panel {
 	border-radius: 12px !important;
 }
+.contentCls ul li {
+	width: 75vw !important;
+}
 /*.footerInv {*/
 /*    background-color: #2f4f4f00 !important;*/
 /*    border-top: 1px solid #475b6d00 !important;*/
