@@ -37,17 +37,17 @@ sap.ui.define([
 							that.custName = response.result.parameters.custName;
 							that.note = response.result.parameters.note;
 							that.recallDate = response.result.parameters.recallDate;
-							if(that.actNo)
-								that.actNo=that.prependZeroes(that.actNo);
+							if (that.actNo)
+								that.actNo = that.prependZeroes(that.actNo);
 							if (that.actNo && !that.recallDate && !that.note) {
 								var flag = 0;
 								var oModel = that.getView().getModel("actModel");
 								for (var i = 0; i < oModel.oData.d.results.length; i++) {
 									if (oModel.oData.d.results[i].AccountId == that.actNo) {
 										flag = 1;
-										response.result.parameters.custName= oModel.oData.d.results[i].SoldToPartner;
-										that.custName=oModel.oData.d.results[i].SoldToPartner;
-										result="So it is for "+that.custName+". What's the recall date?";
+										response.result.parameters.custName = oModel.oData.d.results[i].SoldToPartner;
+										that.custName = oModel.oData.d.results[i].SoldToPartner;
+										result = "So it is for " + that.custName + ". What's the recall date?";
 									}
 								}
 								if (!flag) {
@@ -55,27 +55,28 @@ sap.ui.define([
 								}
 							}
 							if (that.actNo && that.note) {
-								
+
 								var oModel = that.getView().getModel("actModel");
 								for (var i = 0; i < oModel.oData.d.results.length; i++) {
-									
+
 									if (oModel.oData.d.results[i].AccountId == that.actNo) {
 										var oItem = JSON.parse(JSON.stringify(oModel.oData.d.results[i]));
-										
+
 										jQuery.sap.require("sap.ui.core.format.DateFormat");
 										var oDateFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
 											pattern: "dd/MM/yyyy"
 										});
 										var oNote = "Last note : " + oDateFormat.format(new Date()) + " : " + that.note;
 										oItem.ActivityId = that.generateActivityId(oModel.oData.d.results);
-										oItem.StartDate= "/Date("+new Date().getTime()+")/";
-										oItem.EndDate="/Date("+new Date(that.recallDate).getTime()+")/";
+										oItem.StartDate = "/Date(" + new Date().getTime() + ")/";
+										oItem.EndDate = "/Date(" + new Date(that.recallDate).getTime() + ")/";
 										oItem.Notes = oNote;
 										oModel.oData.d.results.push(oItem);
 										oModel.refresh();
-										result="Great! Activity with "+oItem.ActivityId+" has been created."
+										result = "Great! Activity with " + oItem.ActivityId + " has been created.";
+
+										that.simulateInput("more");
 										break;
-										
 									}
 
 									// if (oModel.oData.d.results[i].ActivityId == that.actId) {
@@ -98,7 +99,7 @@ sap.ui.define([
 								var oItems = [];
 								for (var i = 0; i < oModel.oData.d.results.length; i++) {
 									var str = oModel.oData.d.results[i].SoldToPartner.toLowerCase();
-									if (str==that.custName.toLowerCase()) {
+									if (str == that.custName.toLowerCase()) {
 
 										oItems.push(oModel.oData.d.results[i]);
 									}
@@ -150,6 +151,14 @@ sap.ui.define([
 						} else if (response.result.metadata.intentName === "chooseAct") {
 
 						}
+						else if(response.result.metadata.intentName==="createNote - more") {
+							if(response.result.parameters.confirm==="yes")
+							result="Oh Yes! Added to Calender";
+							else if(response.result.parameters.confirm==="no"){
+							result="Okay. Anything else I can help you with?";
+							}
+							
+						}
 						oMessage.addContent(new sap.m.Text({
 							text: result
 						}));
@@ -165,16 +174,17 @@ sap.ui.define([
 			artyom.addCommands(commandHello);
 		},
 		onAfterRendering: function() {
-			var that=this;
+			var that = this;
 			this.app = sap.ui.getCore().byId("appId");
-			this.sendText("Hey!").then(function(response){
-				var oMessage= new BotResponse();
-				oMessage.addContent(new sap.m.Text({
-					text: response.result.fulfillment.speech
-				}));
-				that.getView().byId("msgContent").addContent(oMessage);
-				artyom.say(response.result.fulfillment.speech);
-			});
+			this.simulateInput("Hey");
+			// this.sendText("Hey!").then(function(response){
+			// 	var oMessage= new BotResponse();
+			// 	oMessage.addContent(new sap.m.Text({
+			// 		text: response.result.fulfillment.speech
+			// 	}));
+			// 	that.getView().byId("msgContent").addContent(oMessage);
+			// 	artyom.say(response.result.fulfillment.speech);
+			// });
 			//	dragElement(document.getElementById('homeView--mydiv'));
 		},
 		toggleListen: function(oEvent) {
@@ -232,26 +242,42 @@ sap.ui.define([
 				return value;
 			}
 		},
-		generateActivityId:function(oArray){
-			var id=parseInt(oArray[0].ActivityId);
-			for(var i=0;i<oArray.length;i++){
-				if(id<parseInt(oArray[i].ActivityId)){
-					id=parseInt(oArray[i].ActivityId);
+		generateActivityId: function(oArray) {
+			var id = parseInt(oArray[0].ActivityId);
+			for (var i = 0; i < oArray.length; i++) {
+				if (id < parseInt(oArray[i].ActivityId)) {
+					id = parseInt(oArray[i].ActivityId);
 				}
-				
+
 			}
 			id++;
-			id=id.toString();
-			id= this.prependZeroes(id);
+			id = id.toString();
+			id = this.prependZeroes(id);
 			return id;
-			
+
 		},
-		prependZeroes:function(id){
-			for(var i=id.length;i<10;i++){
-				id= "0"+id;
-				
+		prependZeroes: function(id) {
+			for (var i = id.length; i < 10; i++) {
+				id = "0" + id;
+
 			}
 			return id;
+		},
+		simulateInput: function(text) {
+			//artyom.simulateInstruction(text);
+			var that = this;
+			this.sendText(text).then(function(response) {
+				var oMessage = new BotResponse();
+				oMessage.addContent(new sap.m.Text({
+					text: response.result.fulfillment.speech
+				}));
+				that.getView().byId("msgContent").addContent(oMessage);
+				artyom.say(response.result.fulfillment.speech);
+				jQuery.sap.delayedCall(500, that, function() {
+					that.scrollDown();
+				});
+				return response;
+			});
 		}
 
 	});
